@@ -1,16 +1,24 @@
-package main 
+package main
 
 import (
-	"fmt"
 	"bufio"
-	"os"
 	"errors"
+	"fmt"
+	"os"
+
+	"github.com/shubhdevelop/Lox/Scanner"
+	"github.com/shubhdevelop/Lox/state"
 )
 
 func run(source string){
-	fmt.Println("executed: ", source)
+	scanner := scanner.Scanner{source}
+	tokens, err := scanner.ScanTokens();
+	if err != nil {
+		errors.New("Error Scanning tokens")
+	} else {
+		fmt.Println(tokens[1:])
+	}
 }
-
 
 
 func runFile(path string){
@@ -22,8 +30,11 @@ func runFile(path string){
 	source := string(bytes[:]);
 
 	run(source)
-	fmt.Print(source);
-}
+	if state.HadError { 
+		os.Exit(65)
+	}
+
+}   
 
 func runPrompt(){
 	fmt.Println("Running in prompt Mode")
@@ -35,13 +46,17 @@ func runPrompt(){
 		if err != nil {
 			errors.New("Error Reading the line")
 			break;
-		} else if len(line) == 0 {
+		} else if len(line) == 0 {    
 			break
 		} else if line == "exit()\n"{
 			break
 		}
 		run(string(line));
+		if state.HadError { 
+			os.Exit(65)
+		}
 	}
+
 	fmt.Println("exiting out of LOX")
 
 }
