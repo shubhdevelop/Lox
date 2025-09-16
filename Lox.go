@@ -11,7 +11,7 @@ import (
 
 func run(source string){
 	scanner := scanner.Scanner{Source:source}
-	tokens, err := scanner.ScanToken()
+	tokens, err := scanner.ScanTokens()
 	if err != nil {
 		errors.New("Error Scanning tokens")
 	} else {
