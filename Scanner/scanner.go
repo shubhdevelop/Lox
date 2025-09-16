@@ -2,109 +2,77 @@ package scanner
 
 import (
 	"errors"
-	"fmt"
-	"strings"
+	"github.com/shubhdevelop/Lox/token"
+	"github.com/shubhdevelop/Lox/loxErrors"
 )
 
 type Scanning interface {
-	ScanTokens() ([]string, error)
+	ScanToken() ([]string, error)
 }
 
 type Scanner struct {
 	Source string
+	Tokens []token.Token
+	start int
+	current int
+	line int
+}
+
+func (s *Scanner) isAtEnd() bool {
+	return s.current >= len(s.Source)
+}
+
+func (s *Scanner) advance() rune {
+	runes := []rune(s.Source)
+	ch := runes[s.current]
+	s.current++
+	return ch
+}
+
+func (s *Scanner) addToken(t token.TokenType, literal interface{}) {
+	text := s.Source[s.start:s.current] // substring
+	tok := token.Token{
+		Type:    t,
+		Lexeme:  text,
+		Literal: literal,
+		Line:    s.line,
+	}
+	s.Tokens = append(s.Tokens, tok)
+}
+
+func (s *Scanner) addTokenNoLiteral(t token.TokenType) {
+	s.addToken(t, nil)
 }
 
 
-// TokenType represents all possible token types
-type TokenType int
-
-const (
-	// Single-character tokens
-	LEFT_PAREN TokenType = iota
-	RIGHT_PAREN
-	LEFT_BRACE
-	RIGHT_BRACE
-	COMMA
-	DOT
-	MINUS
-	PLUS
-	SEMICOLON
-	SLASH
-	STAR
-
-	// One or two character tokens
-	BANG
-	BANG_EQUAL
-	EQUAL
-	EQUAL_EQUAL
-	GREATER
-	GREATER_EQUAL
-	LESS
-	LESS_EQUAL
-
-	// Literals
-	IDENTIFIER
-	STRING
-	NUMBER
-
-	// Keywords
-	AND
-	CLASS
-	ELSE
-	FALSE
-	FUN
-	FOR
-	IF
-	NIL
-	OR
-	PRINT
-	RETURN
-	SUPER
-	THIS
-	TRUE
-	VAR
-	WHILE
-
-	// End of file
-	EOF
-)
-
-func (t TokenType) String() string {
-	return [...]string{
-		"LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACE", "RIGHT_BRACE",
-		"COMMA", "DOT", "MINUS", "PLUS", "SEMICOLON", "SLASH", "STAR",
-		"BANG", "BANG_EQUAL", "EQUAL", "EQUAL_EQUAL", "GREATER", "GREATER_EQUAL",
-		"LESS", "LESS_EQUAL",
-		"IDENTIFIER", "STRING", "NUMBER",
-		"AND", "CLASS", "ELSE", "FALSE", "FUN", "FOR", "IF", "NIL", "OR",
-		"PRINT", "RETURN", "SUPER", "THIS", "TRUE", "VAR", "WHILE",
-		"EOF",
-	}[t]
-}
-
-type Token struct {
-	Type    TokenType   // Enum we defined earlier
-	Lexeme  string      // Raw source text
-	Literal interface{} // Can hold string, number, etc.
-	Line    int         // Line number in source
-}
-
-func (t Token) String() string {
-	return fmt.Sprintf("%v %s %v", t.Type, t.Lexeme, t.Literal)
-}
-
-func (s Scanner) ScanTokens() ([]string, error) {
-	if len(s.Source) <= 0 {
+func (s *Scanner) ScanToken() ([]token.Token, error) {
+	if len(s.Source) == 0 {
 		return nil, errors.New("source is empty")
 	}
-	
-	// Initialize empty slice instead of fixed size
-	tokens := make([]string, 0)
-	words := strings.Fields(s.Source)
-	
-	for _, word := range words {
-		tokens = append(tokens, word)
+
+	c := s.advance()
+	switch c {
+	case '(':
+		s.addToken(token.LEFT_PAREN, nil)
+	case ')':
+		s.addToken(token.RIGHT_PAREN, nil)
+	case '{':
+		s.addToken(token.LEFT_BRACE, nil)
+	case '}':
+		s.addToken(token.RIGHT_BRACE, nil)
+	case ',':
+		s.addToken(token.COMMA, nil)
+	case '.':
+		s.addToken(token.DOT, nil)
+	case '-':
+		s.addToken(token.MINUS, nil)
+	case '+':
+		s.addToken(token.PLUS, nil)
+	case ';':
+		s.addToken(token.SEMICOLON, nil)
+	case '*':
+		s.addToken(token.STAR, nil)
+	default: loxErrors.ThrowNewError(s.line, "hello" )
 	}
-	
-	return tokens, nil
+	return s.Tokens, nil
 }

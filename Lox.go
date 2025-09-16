@@ -5,18 +5,17 @@ import (
 	"errors"
 	"fmt"
 	"os"
-
-	"github.com/shubhdevelop/Lox/Scanner"
+	"github.com/shubhdevelop/Lox/scanner"
 	"github.com/shubhdevelop/Lox/state"
 )
 
 func run(source string){
-	scanner := scanner.Scanner{source}
-	tokens, err := scanner.ScanTokens();
+	scanner := scanner.Scanner{Source:source}
+	tokens, err := scanner.ScanToken()
 	if err != nil {
 		errors.New("Error Scanning tokens")
 	} else {
-		fmt.Println(tokens[1:])
+		fmt.Println(tokens[:])
 	}
 }
 
