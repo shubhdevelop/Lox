@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/shubhdevelop/Lox/ast"
+	"github.com/shubhdevelop/Lox/parser"
 	"github.com/shubhdevelop/Lox/printer"
 	"github.com/shubhdevelop/Lox/scanner"
 	"github.com/shubhdevelop/Lox/state"
