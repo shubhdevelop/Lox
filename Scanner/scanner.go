@@ -2,8 +2,8 @@ package scanner
 
 import (
 	"errors"
-	"github.com/shubhdevelop/Lox/token"
 	"github.com/shubhdevelop/Lox/loxErrors"
+	"github.com/shubhdevelop/Lox/token"
 	"strconv"
 )
 
@@ -12,11 +12,11 @@ type Scanning interface {
 }
 
 type Scanner struct {
-	Source string
-	Tokens []token.Token
-	start int
+	Source  string
+	Tokens  []token.Token
+	start   int
 	current int
-	line int
+	line    int
 }
 
 var KeywordMap = map[string]token.TokenType{
@@ -64,11 +64,11 @@ func (s *Scanner) addTokenNoLiteral(t token.TokenType) {
 	s.addToken(t, nil)
 }
 
-func (s *Scanner) match(expected rune) bool{
+func (s *Scanner) match(expected rune) bool {
 	if s.isAtEnd() {
 		return false
 	}
-	if runes :=[]rune(s.Source); runes[s.current] != expected {
+	if runes := []rune(s.Source); runes[s.current] != expected {
 		return false
 	}
 	s.current++
@@ -76,10 +76,10 @@ func (s *Scanner) match(expected rune) bool{
 }
 
 func (s *Scanner) peek() rune {
-	if s.isAtEnd() { 
-		return '\000' 
+	if s.isAtEnd() {
+		return '\000'
 	}
-	runes := []rune(s.Source); 
+	runes := []rune(s.Source)
 	return runes[s.current]
 }
 
@@ -91,8 +91,8 @@ func (s *Scanner) peekNext() rune {
 	return runes[s.current+1]
 }
 
-func (s *Scanner) isAlpha( c rune) bool {
-	if (c >= 'a' && c <= 'z') || (c >= 'A' && c <='Z') || (c == '_') {
+func (s *Scanner) isAlpha(c rune) bool {
+	if (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_') {
 		return true
 	}
 	return false
@@ -102,16 +102,15 @@ func (s *Scanner) isAlphaNumeric(c rune) bool {
 	return s.isAlpha(c) || s.isAlpha(c)
 }
 
-
-func (s *Scanner) string(){
+func (s *Scanner) string() {
 	for s.peek() != '"' && !s.isAtEnd() {
 		if s.peek() == '\n' {
 			s.line++
 		}
 		s.advance()
 	}
-	if (s.isAtEnd()) {
-		loxErrors.ThrowNewError(s.line, "Unterminated string.");
+	if s.isAtEnd() {
+		loxErrors.ThrowNewError(s.line, "Unterminated string.")
 		return
 	}
 	s.advance()
@@ -126,7 +125,7 @@ func (s *Scanner) isDigit(c rune) bool {
 	return false
 }
 
-func (s *Scanner) number (){
+func (s *Scanner) number() {
 	for s.isDigit(s.peek()) {
 		s.advance()
 	}
@@ -136,7 +135,7 @@ func (s *Scanner) number (){
 			s.advance()
 		}
 	}
-	value := s.Source[s.start: s.current]
+	value := s.Source[s.start:s.current]
 	valueInFloat, err := strconv.ParseFloat(value, 64)
 	if err != nil {
 		loxErrors.ThrowNewError(s.line, "Unexpected Numerical Value")
@@ -148,15 +147,14 @@ func (s *Scanner) identifier() {
 	for s.isAlphaNumeric(s.peek()) {
 		s.advance()
 	}
-	text := string([]rune(s.Source)[s.start: s.current])
+	text := string([]rune(s.Source)[s.start:s.current])
 	tokenType, ok := KeywordMap[text]
 	if !ok {
 		s.addToken(token.IDENTIFIER, text)
-	}else{
+	} else {
 		s.addToken(tokenType, nil)
 	}
 }
-
 
 func (s *Scanner) scanToken() {
 	c := s.advance()
@@ -184,32 +182,32 @@ func (s *Scanner) scanToken() {
 	case '!':
 		if s.match('=') {
 			s.addToken(token.BANG_EQUAL, nil)
-		}else{
+		} else {
 			s.addToken(token.BANG, nil)
 		}
 	case '=':
 		if s.match('=') {
 			s.addToken(token.EQUAL_EQUAL, nil)
-		}else{
+		} else {
 			s.addToken(token.EQUAL, nil)
 		}
 	case '<':
 		if s.match('=') {
 			s.addToken(token.LESS_EQUAL, nil)
-		}else{
+		} else {
 			s.addToken(token.LESS, nil)
 		}
 	case '>':
 		if s.match('=') {
 			s.addToken(token.GREATER_EQUAL, nil)
-		}else{
-			s.addToken(token.GREATER, nil);
+		} else {
+			s.addToken(token.GREATER, nil)
 		}
 	case '/':
-		if (s.match('/')) {
+		if s.match('/') {
 			// A comment goes until the end of the line.
-			for (s.peek() != '\n' && !s.isAtEnd()) { 
-				s.advance();
+			for s.peek() != '\n' && !s.isAtEnd() {
+				s.advance()
 			}
 		} else {
 			s.addToken(token.SLASH, nil)
@@ -219,20 +217,19 @@ func (s *Scanner) scanToken() {
 	case '\t':
 		// Ignore whitespace.
 	case '\n':
-		s.line++;
+		s.line++
 	case '"':
 		s.string()
 	default:
 		if s.isDigit(c) {
-			s.number();
-		}else if s.isAlpha(c){
+			s.number()
+		} else if s.isAlpha(c) {
 			s.identifier()
-		}else {
-			loxErrors.ThrowNewError(s.line, "Unexpected Character Encountered" )
+		} else {
+			loxErrors.ThrowNewError(s.line, "Unexpected Character Encountered")
 		}
 	}
 }
-
 
 func (s *Scanner) ScanTokens() ([]token.Token, error) {
 	if len(s.Source) == 0 {

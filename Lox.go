@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/shubhdevelop/Lox/ast"
+	"github.com/shubhdevelop/Lox/parser"
 	"github.com/shubhdevelop/Lox/printer"
 	"github.com/shubhdevelop/Lox/scanner"
 	"github.com/shubhdevelop/Lox/state"
@@ -16,11 +17,18 @@ import (
 func run(source string) {
 	scanner := scanner.Scanner{Source: source}
 	tokens, err := scanner.ScanTokens()
+	parserInstance := parser.Parser{
+		Tokens: tokens,
+	}
 	if err != nil {
 		errors.New("Error Scanning tokens")
-	} else {
-		fmt.Println(tokens[:])
 	}
+	expr := parserInstance.Parse()
+	if state.HadError {
+		return
+	}
+	printer := printer.AstPrinter{}
+	fmt.Print(printer.Print(expr))
 }
 
 func runFile(path string) {
