@@ -1,28 +1,56 @@
 package parser
 
 import (
-	"github.com/shubhdevelop/Lox/token"
+	"errors"
 	"github.com/shubhdevelop/Lox/ast"
+	"github.com/shubhdevelop/Lox/loxErrors"
+	"github.com/shubhdevelop/Lox/token"
 )
 
 type Parser struct {
 	current int
-	Tokens []token.Token
+	Tokens  []token.Token
 }
 
-func (p *Parser)  expression() ast.Expr {
+func (p *Parser) error(token token.Token, message string) error {
+	loxErrors.Error(token, message)
+	return errors.New("Error while parsing")
+}
+
+func (p *Parser) synchronize() {
+	p.advance()
+	for !p.isAtEnd() {
+		if p.previous().Type == token.SEMICOLON {
+			return
+		}
+		switch p.peek().Type {
+		case token.CLASS:
+		case token.FUN:
+		case token.VAR:
+		case token.FOR:
+		case token.IF:
+		case token.WHILE:
+		case token.PRINT:
+		case token.RETURN:
+			return
+		}
+		p.advance()
+	}
+}
+
+func (p *Parser) expression() ast.Expr {
 	return p.equality()
 }
 
 func (p *Parser) equality() ast.Expr {
 	expr := p.comparison()
-	for p.match(token.BANG_EQUAL, token.EQUAL_EQUAL){
+	for p.match(token.BANG_EQUAL, token.EQUAL_EQUAL) {
 		operator := p.previous()
 		right := p.comparison()
 		expr = ast.Binary{
-			Left:expr,
+			Left:     expr,
 			Operator: operator,
-			Right: right
+			Right:    right,
 		}
 	}
 	return expr
@@ -39,91 +67,113 @@ func (p *Parser) match(types ...token.TokenType) bool {
 	return false
 }
 
-func (p *Parser) check(type token.TokenType) bool {
-	if p.isAtEnd(){
+func (p *Parser) consume(tokenType token.TokenType, message string) token.Token {
+	if p.check(tokenType) {
+		return p.advance()
+	}
+	panic(p.error(p.peek(), message))
+}
+
+func (p *Parser) check(tokenType token.TokenType) bool {
+	if p.isAtEnd() {
 		return false
 	}
-	return p.peek().type == type
+	return p.peek().Type == tokenType
 }
 
 func (p *Parser) advance() token.Token {
-	if !p.isAtEnd(){
-		p.current++;
+	if !p.isAtEnd() {
+		p.current++
 	}
 	return p.previous()
 }
 
 func (p *Parser) isAtEnd() bool {
-	return p.peek().type == token.EOF
+	return p.peek().Type == token.EOF
 }
 
 func (p *Parser) peek() token.Token {
-	return p.Tokens[p.current] 
+	return p.Tokens[p.current]
 }
 
-func (p *Parser) previous() {
-	return p.Tokens[p.current - 1];
+func (p *Parser) previous() token.Token {
+	return p.Tokens[p.current-1]
 }
 
-
-func (p *Parser) comparison() {
+func (p *Parser) comparison() ast.Expr {
 	expr := p.term()
 	for p.match(token.GREATER, token.GREATER_EQUAL, token.LESS, token.LESS_EQUAL) {
-		operator := p.expression()
-		right = p.factor()
-		expr = ast.Binary{Left:expr, Operator:  operator, Right:  right} 
+		operator := p.previous()
+		right := p.term()
+		expr = ast.Binary{
+			Left:     expr,
+			Operator: operator,
+			Right:    right,
+		}
 	}
-	return expr 
+	return expr
 }
 
-func (p *Parser) term() {
+func (p *Parser) term() ast.Expr {
 	expr := p.factor()
 	for p.match(token.PLUS, token.MINUS) {
-		operator := p.expression()
-		right = p.factor()
-		expr = ast.Binary{Left:expr, Operator:  operator, Right:  right} 
+		operator := p.previous()
+		right := p.factor()
+		expr = ast.Binary{
+			Left:     expr,
+			Operator: operator,
+			Right:    right,
+		}
 	}
-	return expr 
+	return expr
 }
 
-
-func (p *Parser) factor() {
+func (p *Parser) factor() ast.Expr {
 	expr := p.unary()
 	for p.match(token.SLASH, token.STAR) {
-		operator := p.expression()
-		right = p.unary()
-		expr = ast.Binary{Left:expr, Operator:  operator, Right:  right} 
+		operator := p.previous()
+		right := p.unary()
+		expr = ast.Binary{
+			Left:     expr,
+			Operator: operator,
+			Right:    right,
+		}
 	}
-	return expr 
+	return expr
 }
 
-func (p *Parser) unary() {
+func (p *Parser) unary() ast.Expr {
 	if p.match(token.BANG, token.MINUS) {
 		operator := p.previous()
-		right := p.urinary()
+		right := p.unary()
 		return ast.Unary{
 			Operator: operator,
-			Right: right,
+			Right:    right,
 		}
 	}
 	return p.primary()
 }
 
-func (p *Parser) primary(){
+func (p *Parser) primary() ast.Expr {
 	switch {
 	case p.match(token.FALSE):
-		return ast.Literal{false}
+		return ast.Literal{Value: false}
 	case p.match(token.TRUE):
-		return ast.Literal{true}
+		return ast.Literal{Value: true}
 	case p.match(token.NIL):
-		return ast.Literal{nil}
+		return ast.Literal{Value: nil}
 	case p.match(token.NUMBER, token.STRING):
-		return ast.Literal{p.previous().literal}
+		return ast.Literal{Value: p.previous().Lexeme}
 	case p.match(token.LEFT_PAREN):
 		expr := p.expression()
-		p.consume(token.RIGHT_PAREN,"Expect ')' after expression.") 
-		return ast.Grouping{expr}
+		p.consume(token.RIGHT_PAREN, "Expect ')' after expression.")
+		return ast.Grouping{Expression: expr}
 	default:
+		panic(p.error(p.peek(), "Expected expression"))
 	}
 }
 
+func (p *Parser) Parse() ast.Expr {
+	expr := p.expression()
+	return expr
+}
