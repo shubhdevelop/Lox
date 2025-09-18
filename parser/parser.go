@@ -162,8 +162,10 @@ func (p *Parser) primary() ast.Expr {
 		return ast.Literal{Value: true}
 	case p.match(token.NIL):
 		return ast.Literal{Value: nil}
-	case p.match(token.NUMBER, token.STRING):
-		return ast.Literal{Value: p.previous().Lexeme}
+	case p.match(token.NUMBER):
+		return ast.Literal{Value: p.previous().Literal}
+	case p.match(token.STRING):
+		return ast.Literal{Value: p.previous().Literal}
 	case p.match(token.LEFT_PAREN):
 		expr := p.expression()
 		p.consume(token.RIGHT_PAREN, "Expect ')' after expression.")
