@@ -2,6 +2,8 @@ package parser
 
 import (
 	"errors"
+	"fmt"
+
 	"github.com/shubhdevelop/Lox/ast"
 	"github.com/shubhdevelop/Lox/loxErrors"
 	"github.com/shubhdevelop/Lox/token"
@@ -67,11 +69,11 @@ func (p *Parser) match(types ...token.TokenType) bool {
 	return false
 }
 
-func (p *Parser) consume(tokenType token.TokenType, message string) token.Token {
+func (p *Parser) consume(tokenType token.TokenType, message string) (token.Token, error) {
 	if p.check(tokenType) {
-		return p.advance()
+		return p.advance(), nil
 	}
-	panic(p.error(p.peek(), message))
+	return token.Token{}, p.error(p.peek(), message)
 }
 
 func (p *Parser) check(tokenType token.TokenType) bool {
@@ -151,25 +153,30 @@ func (p *Parser) unary() ast.Expr {
 			Right:    right,
 		}
 	}
-	return p.primary()
+	expr, err := p.primary()
+	if err != nil {
+		fmt.Println(err)
+		return ast.Expr(nil)
+	}
+	return expr
 }
 
-func (p *Parser) primary() ast.Expr {
+func (p *Parser) primary() (ast.Expr, error) {
 	switch {
 	case p.match(token.FALSE):
-		return ast.Literal{Value: false}
+		return ast.Literal{Value: false}, nil
 	case p.match(token.TRUE):
-		return ast.Literal{Value: true}
+		return ast.Literal{Value: true}, nil
 	case p.match(token.NIL):
-		return ast.Literal{Value: nil}
+		return ast.Literal{Value: nil}, nil
 	case p.match(token.NUMBER, token.STRING):
-		return ast.Literal{Value: p.previous().Lexeme}
+		return ast.Literal{Value: p.previous().Lexeme}, nil
 	case p.match(token.LEFT_PAREN):
 		expr := p.expression()
 		p.consume(token.RIGHT_PAREN, "Expect ')' after expression.")
-		return ast.Grouping{Expression: expr}
+		return ast.Grouping{Expression: expr}, nil
 	default:
-		panic(p.error(p.peek(), "Expected expression"))
+		return ast.Expr(nil), p.error(p.peek(), "Expected expression")
 	}
 }
 

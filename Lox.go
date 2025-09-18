@@ -25,6 +25,7 @@ func run(source string) {
 		return
 	}
 	printer := printer.AstPrinter{}
+	fmt.Printf("%v \n", tokens)
 	fmt.Printf("%v \n", printer.Print(expr))
 }
 
