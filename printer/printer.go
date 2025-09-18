@@ -10,7 +10,7 @@ import (
 type AstPrinter struct{}
 
 // Ensure AstPrinter implements ast.Visitor at compile time
-var _ ast.Visitor = (*AstPrinter)(nil)
+var _ ast.ExprVisitor = (*AstPrinter)(nil)
 
 // Print converts an expression to its string representation
 func (p *AstPrinter) Print(expr ast.Expr) string {
