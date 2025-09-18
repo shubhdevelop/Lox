@@ -4,23 +4,30 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"os"
+
+	interpreter "github.com/shubhdevelop/Lox/Interpreter"
 	"github.com/shubhdevelop/Lox/parser"
 	"github.com/shubhdevelop/Lox/printer"
 	"github.com/shubhdevelop/Lox/scanner"
 	"github.com/shubhdevelop/Lox/state"
-	"os"
 )
 
 func run(source string) {
+	state.HadError = false // Reset error state
 	scanner := scanner.Scanner{Source: source}
 	tokens, err := scanner.ScanTokens()
+	interpreter := interpreter.Interpreter{}
 	parserInstance := parser.Parser{
 		Tokens: tokens,
 	}
 	if err != nil {
 		fmt.Println(errors.New("Error Scanning tokens"))
+		state.HadError = true
+		return
 	}
 	expr := parserInstance.Parse()
+	interpreter.Interpret(expr)
 	if state.HadError {
 		return
 	}
@@ -39,6 +46,9 @@ func runFile(path string) {
 	if state.HadError {
 		os.Exit(65)
 	}
+	if state.HadRuntimeError {
+		os.Exit(70)
+	}
 
 }
 
@@ -49,16 +59,19 @@ func runPrompt() {
 		fmt.Print(">> ")
 		line, err := reader.ReadString('\n')
 		if err != nil {
-			fmt.Println(errors.New("Error Reading the line"))
+			fmt.Println("Error Reading the line")
 			continue
-		} else if len(line) == 0 {
-			break
-		} else if line == "exit()\n" {
+		} else if line == "\n" || line == "" {
+			continue
+		} else if line == "clear\n" {
+			fmt.Print("\033[H\033[2J")
+			continue
+		} else if line == "exit\n" {
 			break
 		}
 		run(string(line))
 		if state.HadError {
-			os.Exit(65)
+			state.HadError = false // Reset error state for next input
 		}
 	}
 }
