@@ -4,7 +4,7 @@ import (
     "github.com/shubhdevelop/Lox/token"
 )
 
-type Visitor interface {
+type ExprVisitor interface {
     VisitBinaryExpr(expr Binary) interface{}
     VisitGroupingExpr(expr Grouping) interface{}
     VisitLiteralExpr(expr Literal) interface{}
@@ -12,7 +12,7 @@ type Visitor interface {
 }
 
 type Expr interface {
-    Accept(visitor Visitor) interface{}
+    Accept(visitor ExprVisitor) interface{}
 }
 
 type Binary struct {
@@ -21,24 +21,24 @@ type Binary struct {
     Right Expr
 }
 
-func (e Binary) Accept(visitor Visitor) interface{} {
-    return visitor.VisitBinaryExpr(e)
+func (n Binary) Accept(visitor ExprVisitor) interface{} {
+    return visitor.VisitBinaryExpr(n)
 }
 
 type Grouping struct {
     Expression Expr
 }
 
-func (e Grouping) Accept(visitor Visitor) interface{} {
-    return visitor.VisitGroupingExpr(e)
+func (n Grouping) Accept(visitor ExprVisitor) interface{} {
+    return visitor.VisitGroupingExpr(n)
 }
 
 type Literal struct {
     Value interface{}
 }
 
-func (e Literal) Accept(visitor Visitor) interface{} {
-    return visitor.VisitLiteralExpr(e)
+func (n Literal) Accept(visitor ExprVisitor) interface{} {
+    return visitor.VisitLiteralExpr(n)
 }
 
 type Unary struct {
@@ -46,7 +46,7 @@ type Unary struct {
     Right Expr
 }
 
-func (e Unary) Accept(visitor Visitor) interface{} {
-    return visitor.VisitUnaryExpr(e)
+func (n Unary) Accept(visitor ExprVisitor) interface{} {
+    return visitor.VisitUnaryExpr(n)
 }
 
