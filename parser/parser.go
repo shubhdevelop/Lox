@@ -175,7 +175,33 @@ func (p *Parser) primary() ast.Expr {
 	}
 }
 
-func (p *Parser) Parse() ast.Expr {
-	expr := p.expression()
-	return expr
+func (p *Parser) Parse() []ast.Stmt {
+	statements := []ast.Stmt{}
+	for !p.isAtEnd() {
+		statements = append(statements, p.statement())
+	}
+	return statements
+}
+
+func (p *Parser) statement() ast.Stmt {
+	if p.match(token.PRINT) {
+		return p.printStatement()
+	}
+	return p.expressionStatement()
+}
+
+func (p *Parser) printStatement() ast.Stmt {
+	value := p.expression()
+	p.consume(token.SEMICOLON, "Expect ';' after value.")
+	return ast.PrintStmt{
+		Expression: value,
+	}
+}
+
+func (p *Parser) expressionStatement() ast.Stmt {
+	value := p.expression()
+	p.consume(token.SEMICOLON, "Expect ';' after value.")
+	return ast.ExpressionStmt{
+		Expression: value,
+	}
 }
