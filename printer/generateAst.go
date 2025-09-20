@@ -112,10 +112,12 @@ func main() {
 		"Grouping : Expr expression",
 		"Literal  : interface{} value",
 		"Unary    : token.Token operator, Expr right",
+		"Variable : token.Token name",
 	}, []string{"github.com/shubhdevelop/Lox/token"})
 
 	defineAst(outputDir, "Stmt", []string{
 		"ExpressionStmt : Expr expression",
 		"PrintStmt      : Expr expression",
-	}, []string{"github.com/shubhdevelop/Lox/ast"})
+		"Var : token.Token name, Expr initializer",
+	}, []string{"github.com/shubhdevelop/Lox/token"})
 }
