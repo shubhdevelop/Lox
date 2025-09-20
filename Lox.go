@@ -8,7 +8,6 @@ import (
 
 	interpreter "github.com/shubhdevelop/Lox/Interpreter"
 	"github.com/shubhdevelop/Lox/parser"
-	"github.com/shubhdevelop/Lox/printer"
 	"github.com/shubhdevelop/Lox/scanner"
 	"github.com/shubhdevelop/Lox/state"
 )
@@ -31,8 +30,6 @@ func run(source string) {
 	if state.HadError {
 		return
 	}
-	printer := printer.AstPrinter{}
-	fmt.Printf("%v \n", printer.Print(expr))
 }
 
 func runFile(path string) {

@@ -12,6 +12,7 @@ import (
 type Interpreter struct{}
 
 var _ ast.ExprVisitor = (*Interpreter)(nil)
+var _ ast.StmtVisitor = (*Interpreter)(nil)
 
 func (i *Interpreter) VisitBinaryExpr(expr ast.Binary) interface{} {
 	left := i.evaluate(expr.Left)
@@ -136,7 +137,7 @@ func (i *Interpreter) isEqual(a, b interface{}) bool {
 	return false // types don't match or not comparable
 }
 
-func (i *Interpreter) Interpret(expr ast.Expr) {
+func (i *Interpreter) Interpret(stmts []ast.Stmt) {
 	defer func() {
 		if r := recover(); r != nil {
 			// Equivalent to catching RuntimeError in Java
@@ -144,8 +145,13 @@ func (i *Interpreter) Interpret(expr ast.Expr) {
 		}
 	}()
 
-	value := i.evaluate(expr)
-	fmt.Println(stringify(value))
+	for _, stmt := range stmts {
+		i.execute(stmt)
+	}
+}
+
+func (i *Interpreter) execute(stmt ast.Stmt) {
+	stmt.Accept(i)
 }
 
 // stringify matches Lox semantics
@@ -184,4 +190,17 @@ func (i Interpreter) checkNumberOperand(operator token.Token, left, right interf
 		}
 	}
 	panic(runtimeError.ThrowRuntimeError())
+}
+
+// Statement Visitors
+
+func (i *Interpreter) VisitExpressionStmtStmt(stmt ast.ExpressionStmt) interface{} {
+	i.evaluate(stmt.Expression)
+	return nil
+}
+
+func (i *Interpreter) VisitPrintStmtStmt(stmt ast.PrintStmt) interface{} {
+	value := i.evaluate(stmt.Expression)
+	fmt.Println(stringify(value))
+	return nil
 }
