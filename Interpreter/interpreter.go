@@ -7,7 +7,7 @@ import (
 	"github.com/shubhdevelop/Lox/LoxErrors"
 	"github.com/shubhdevelop/Lox/ast"
 	"github.com/shubhdevelop/Lox/environment"
-	"github.com/shubhdevelop/Lox/token"
+	"github.com/shubhdevelop/Lox/Token"
 )
 
 type Interpreter struct{}

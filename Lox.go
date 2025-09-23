@@ -8,7 +8,7 @@ import (
 
 	interpreter "github.com/shubhdevelop/Lox/Interpreter"
 	"github.com/shubhdevelop/Lox/parser"
-	"github.com/shubhdevelop/Lox/scanner"
+	"github.com/shubhdevelop/Lox/Scanner"
 	"github.com/shubhdevelop/Lox/state"
 )
 
