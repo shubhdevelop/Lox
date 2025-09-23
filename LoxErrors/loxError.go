@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/shubhdevelop/Lox/state"
-	"github.com/shubhdevelop/Lox/token"
+	"github.com/shubhdevelop/Lox/Token"
 )
 
 type RuntimeError struct {

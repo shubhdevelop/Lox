@@ -3,7 +3,7 @@ package scanner
 import (
 	"errors"
 	"github.com/shubhdevelop/Lox/LoxErrors"
-	"github.com/shubhdevelop/Lox/token"
+	"github.com/shubhdevelop/Lox/Token"
 	"strconv"
 )
 

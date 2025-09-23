@@ -3,7 +3,7 @@ package environment
 import (
 	"fmt"
 	loxErrors "github.com/shubhdevelop/Lox/LoxErrors"
-	"github.com/shubhdevelop/Lox/token"
+	"github.com/shubhdevelop/Lox/Token"
 )
 
 type Environment struct {
