@@ -1,1 +1,5 @@
-2+2 + "4"
+print "one";
+var a = 2 + 3;
+var b = 5 == 3;
+print a;
+print b;
