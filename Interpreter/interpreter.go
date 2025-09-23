@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/shubhdevelop/Lox/LoxErrors"
 	"github.com/shubhdevelop/Lox/ast"
-	"github.com/shubhdevelop/Lox/loxErrors"
+	"github.com/shubhdevelop/Lox/environment"
 	"github.com/shubhdevelop/Lox/token"
 )
 
 type Interpreter struct{}
+
+var env = environment.Environment{}
 
 var _ ast.ExprVisitor = (*Interpreter)(nil)
 var _ ast.StmtVisitor = (*Interpreter)(nil)
@@ -203,4 +206,20 @@ func (i *Interpreter) VisitPrintStmtStmt(stmt ast.PrintStmt) interface{} {
 	value := i.evaluate(stmt.Expression)
 	fmt.Println(stringify(value))
 	return nil
+}
+
+func (i *Interpreter) VisitVarStmtStmt(stmt ast.VarStmt) interface{} {
+	var value interface{} = nil
+
+	if stmt.Initializer != nil {
+		value = i.evaluate(stmt.Initializer)
+	}
+
+	env.Define(stmt.Name.Lexeme, value)
+	return nil
+}
+
+func (i *Interpreter) VisitVariableExpr(expr ast.Variable) interface{} {
+	value, _ := env.Get(expr.Name)
+	return value
 }

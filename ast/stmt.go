@@ -1,8 +1,13 @@
 package ast
 
+import (
+	"github.com/shubhdevelop/Lox/token"
+)
+
 type StmtVisitor interface {
 	VisitExpressionStmtStmt(stmt ExpressionStmt) interface{}
 	VisitPrintStmtStmt(stmt PrintStmt) interface{}
+	VisitVarStmtStmt(stmt VarStmt) interface{}
 }
 
 type Stmt interface {
@@ -23,4 +28,13 @@ type PrintStmt struct {
 
 func (n PrintStmt) Accept(visitor StmtVisitor) interface{} {
 	return visitor.VisitPrintStmtStmt(n)
+}
+
+type VarStmt struct {
+	Name        token.Token
+	Initializer Expr
+}
+
+func (n VarStmt) Accept(visitor StmtVisitor) interface{} {
+	return visitor.VisitVarStmtStmt(n)
 }

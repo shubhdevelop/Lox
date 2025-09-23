@@ -2,8 +2,9 @@ package parser
 
 import (
 	"errors"
+
+	"github.com/shubhdevelop/Lox/LoxErrors"
 	"github.com/shubhdevelop/Lox/ast"
-	"github.com/shubhdevelop/Lox/loxErrors"
 	"github.com/shubhdevelop/Lox/token"
 )
 
@@ -166,6 +167,11 @@ func (p *Parser) primary() ast.Expr {
 		return ast.Literal{Value: p.previous().Literal}
 	case p.match(token.STRING):
 		return ast.Literal{Value: p.previous().Literal}
+	case p.match(token.IDENTIFIER):
+		return ast.Variable{
+			p.previous(),
+		}
+
 	case p.match(token.LEFT_PAREN):
 		expr := p.expression()
 		p.consume(token.RIGHT_PAREN, "Expect ')' after expression.")
@@ -178,9 +184,36 @@ func (p *Parser) primary() ast.Expr {
 func (p *Parser) Parse() []ast.Stmt {
 	statements := []ast.Stmt{}
 	for !p.isAtEnd() {
-		statements = append(statements, p.statement())
+		statements = append(statements, p.declaration())
 	}
 	return statements
+}
+
+func (p *Parser) declaration() ast.Stmt {
+	defer func() {
+		if r := recover(); r != nil {
+			if _, ok := r.(loxErrors.RuntimeError); ok {
+				p.synchronize()
+			} else {
+				panic(r) // rethrow if it's not a ParseError
+			}
+		}
+	}()
+
+	if p.match(token.VAR) {
+		return p.varDeclaration()
+	}
+	return p.statement()
+}
+
+func (p *Parser) varDeclaration() ast.Stmt {
+	name := p.consume(token.IDENTIFIER, "Expected variable name")
+	var initializer ast.Expr = nil
+	if p.match(token.EQUAL) {
+		initializer = p.expression()
+	}
+	p.consume(token.SEMICOLON, "Expect ';' after variable declaration.")
+	return ast.VarStmt{name, initializer}
 }
 
 func (p *Parser) statement() ast.Stmt {
