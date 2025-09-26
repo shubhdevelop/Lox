@@ -113,7 +113,7 @@ func main() {
 		"Literal  : interface{} value",
 		"Unary    : token.Token operator, Expr right",
 		"Variable : token.Token name",
-		"Assign   : token.Token, Expr value",
+		"Assign   : token.Token name, Expr value",
 	}, []string{"github.com/shubhdevelop/Lox/Token"})
 
 	defineAst(outputDir, "Stmt", []string{
