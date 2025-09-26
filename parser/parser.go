@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/shubhdevelop/Lox/LoxErrors"
-	"github.com/shubhdevelop/Lox/ast"
 	"github.com/shubhdevelop/Lox/Token"
+	"github.com/shubhdevelop/Lox/ast"
 )
 
 type Parser struct {
@@ -40,7 +40,24 @@ func (p *Parser) synchronize() {
 }
 
 func (p *Parser) expression() ast.Expr {
-	return p.equality()
+	return p.assignment()
+}
+
+func (p *Parser) assignment() ast.Expr {
+	expr := p.equality()
+	if p.match(token.EQUAL) {
+		equals := p.previous()
+		value := p.assignment()
+		if variable, ok := expr.(ast.Variable); ok {
+			name := variable.Name
+			return ast.Assign{
+				Name:  name,
+				Value: value,
+			}
+		}
+		loxErrors.Error(equals, "Invalid assignment target.")
+	}
+	return expr
 }
 
 func (p *Parser) equality() ast.Expr {

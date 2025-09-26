@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/shubhdevelop/Lox/LoxErrors"
+	"github.com/shubhdevelop/Lox/Token"
 	"github.com/shubhdevelop/Lox/ast"
 	"github.com/shubhdevelop/Lox/environment"
-	"github.com/shubhdevelop/Lox/Token"
 )
 
 type Interpreter struct{}
@@ -223,5 +223,11 @@ func (i *Interpreter) VisitVarStmtStmt(stmt ast.VarStmt) interface{} {
 
 func (i *Interpreter) VisitVariableExpr(expr ast.Variable) interface{} {
 	value, _ := env.Get(expr.Name)
+	return value
+}
+
+func (i *Interpreter) VisitAssignExpr(expr ast.Assign) interface{} {
+	value := i.evaluate(expr.Value)
+	env.Assign(expr.Name, value)
 	return value
 }

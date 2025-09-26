@@ -26,3 +26,16 @@ func (e *Environment) Get(name token.Token) (interface{}, error) {
 
 	panic(error.ThrowRuntimeError())
 }
+
+func (e *Environment) Assign(name token.Token, value interface{}) {
+	if _, ok := e.Values[name.Lexeme]; ok {
+		e.Values[name.Lexeme] = value
+		return
+	}
+	error := loxErrors.RuntimeError{
+		name,
+		"Undefined variable '" + name.Lexeme + "'.",
+	}
+	error.ThrowRuntimeError()
+
+}
