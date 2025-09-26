@@ -12,10 +12,7 @@ import (
 
 type Interpreter struct{}
 
-var env = environment.Environment{
-	Values: make(map[string]interface{}),
-}
-
+var env = environment.NewEnvironment()
 var _ ast.ExprVisitor = (*Interpreter)(nil)
 var _ ast.StmtVisitor = (*Interpreter)(nil)
 
