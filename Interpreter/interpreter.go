@@ -7,7 +7,7 @@ import (
 	"github.com/shubhdevelop/YAPL/Token"
 	"github.com/shubhdevelop/YAPL/ast"
 	"github.com/shubhdevelop/YAPL/environment"
-	"github.com/shubhdevelop/YAPL/yaplErrors"
+	"github.com/shubhdevelop/YAPL/YaplErrors"
 )
 
 type Interpreter struct {

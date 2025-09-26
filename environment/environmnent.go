@@ -3,7 +3,7 @@ package environment
 import (
 	"fmt"
 	"github.com/shubhdevelop/YAPL/Token"
-	"github.com/shubhdevelop/YAPL/yaplErrors"
+	"github.com/shubhdevelop/YAPL/YaplErrors"
 )
 
 type Environment struct {
