@@ -1,11 +1,11 @@
-package loxErrors
+package yaplErrors
 
 import (
 	"fmt"
 	"os"
 
-	"github.com/shubhdevelop/Lox/state"
 	"github.com/shubhdevelop/Lox/Token"
+	"github.com/shubhdevelop/Lox/state"
 )
 
 type RuntimeError struct {

@@ -3,9 +3,9 @@ package parser
 import (
 	"errors"
 
-	"github.com/shubhdevelop/Lox/LoxErrors"
 	"github.com/shubhdevelop/Lox/Token"
 	"github.com/shubhdevelop/Lox/ast"
+	"github.com/shubhdevelop/Lox/yaplErrors"
 )
 
 type Parser struct {
@@ -14,7 +14,7 @@ type Parser struct {
 }
 
 func (p *Parser) error(token token.Token, message string) error {
-	loxErrors.Error(token, message)
+	yaplErrors.Error(token, message)
 	return errors.New("Error while parsing")
 }
 
@@ -55,7 +55,7 @@ func (p *Parser) assignment() ast.Expr {
 				Value: value,
 			}
 		}
-		loxErrors.Error(equals, "Invalid assignment target.")
+		yaplErrors.Error(equals, "Invalid assignment target.")
 	}
 	return expr
 }
@@ -209,7 +209,7 @@ func (p *Parser) Parse() []ast.Stmt {
 func (p *Parser) declaration() ast.Stmt {
 	defer func() {
 		if r := recover(); r != nil {
-			if _, ok := r.(loxErrors.RuntimeError); ok {
+			if _, ok := r.(yaplErrors.RuntimeError); ok {
 				p.synchronize()
 			} else {
 				panic(r) // rethrow if it's not a ParseError

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/shubhdevelop/Lox/LoxErrors"
 	"github.com/shubhdevelop/Lox/Token"
 	"github.com/shubhdevelop/Lox/ast"
 	"github.com/shubhdevelop/Lox/environment"
+	"github.com/shubhdevelop/Lox/yaplErrors"
 )
 
 type Interpreter struct {
@@ -50,7 +50,7 @@ func (i *Interpreter) VisitBinaryExpr(expr ast.Binary) interface{} {
 	case token.MINUS:
 		return left.(float64) - right.(float64)
 	case token.PLUS:
-		runtimeError := loxErrors.RuntimeError{
+		runtimeError := yaplErrors.RuntimeError{
 			Token:   expr.Operator,
 			Message: "Operands must be two numbers or two strings.",
 		}
@@ -182,7 +182,7 @@ func stringify(obj interface{}) string {
 }
 
 func (i Interpreter) checkNumberOperand(operator token.Token, left, right interface{}) {
-	runtimeError := loxErrors.RuntimeError{
+	runtimeError := yaplErrors.RuntimeError{
 		Token:   operator,
 		Message: "Operands must be numbers.",
 	}

@@ -2,8 +2,8 @@ package environment
 
 import (
 	"fmt"
-	loxErrors "github.com/shubhdevelop/Lox/LoxErrors"
 	"github.com/shubhdevelop/Lox/Token"
+	"github.com/shubhdevelop/Lox/yaplErrors"
 )
 
 type Environment struct {
@@ -40,7 +40,7 @@ func (e *Environment) Get(name token.Token) (interface{}, error) {
 		return e.Enclosing.Get(name)
 	}
 
-	error := loxErrors.RuntimeError{
+	error := yaplErrors.RuntimeError{
 		Token:   name,
 		Message: fmt.Sprintf("Undefined variable '%s'.", name.Lexeme),
 	}
@@ -59,7 +59,7 @@ func (e *Environment) Assign(name token.Token, value interface{}) {
 		return
 	}
 
-	error := loxErrors.RuntimeError{
+	error := yaplErrors.RuntimeError{
 		Token:   name,
 		Message: "Undefined variable '" + name.Lexeme + "'.",
 	}

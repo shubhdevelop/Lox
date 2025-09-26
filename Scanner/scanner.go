@@ -2,8 +2,8 @@ package scanner
 
 import (
 	"errors"
-	"github.com/shubhdevelop/Lox/LoxErrors"
 	"github.com/shubhdevelop/Lox/Token"
+	"github.com/shubhdevelop/Lox/yaplErrors"
 	"strconv"
 )
 
@@ -110,7 +110,7 @@ func (s *Scanner) string() {
 		s.advance()
 	}
 	if s.isAtEnd() {
-		loxErrors.ThrowNewError(s.line, "Unterminated string.")
+		yaplErrors.ThrowNewError(s.line, "Unterminated string.")
 		return
 	}
 	s.advance()
@@ -138,7 +138,7 @@ func (s *Scanner) number() {
 	value := s.Source[s.start:s.current]
 	valueInFloat, err := strconv.ParseFloat(value, 64)
 	if err != nil {
-		loxErrors.ThrowNewError(s.line, "Unexpected Numerical Value")
+		yaplErrors.ThrowNewError(s.line, "Unexpected Numerical Value")
 	}
 	s.addToken(token.NUMBER, valueInFloat)
 }
@@ -226,7 +226,7 @@ func (s *Scanner) scanToken() {
 		} else if s.isAlpha(c) {
 			s.identifier()
 		} else {
-			loxErrors.ThrowNewError(s.line, "Unexpected Character Encountered")
+			yaplErrors.ThrowNewError(s.line, "Unexpected Character Encountered")
 		}
 	}
 }

@@ -1,8 +1,0 @@
-print "one";
-var a = 2 + 3;
-var b = 5 == 3;
-print a;
-var c = a + 2;
-print a >= 10;
-print c;
-
