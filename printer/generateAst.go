@@ -117,6 +117,7 @@ func main() {
 	}, []string{"github.com/shubhdevelop/Lox/Token"})
 
 	defineAst(outputDir, "Stmt", []string{
+		"BlockStmt      : []Stmt statement",
 		"ExpressionStmt : Expr expression",
 		"PrintStmt      : Expr expression",
 		"VarStmt : token.Token name, Expr initializer",
