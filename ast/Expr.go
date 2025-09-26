@@ -10,6 +10,7 @@ type ExprVisitor interface {
 	VisitLiteralExpr(expr Literal) interface{}
 	VisitUnaryExpr(expr Unary) interface{}
 	VisitVariableExpr(expr Variable) interface{}
+	VisitAssignExpr(expr Assign) interface{}
 }
 
 type Expr interface {
@@ -57,4 +58,12 @@ type Variable struct {
 
 func (n Variable) Accept(visitor ExprVisitor) interface{} {
 	return visitor.VisitVariableExpr(n)
+}
+
+type Assign struct {
+	Value Expr
+}
+
+func (n Assign) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitAssignExpr(n)
 }
