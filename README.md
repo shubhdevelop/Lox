@@ -1,10 +1,10 @@
-# Lox Interpreter
+# YAPL Interpreter
 
-A Go implementation of the Lox programming language interpreter
+A Go implementation of a programming language interpreter
 
 ## Overview
 
-Lox is a dynamically-typed, interpreted programming language with a clean and simple syntax. This implementation provides a complete interpreter with lexical analysis, parsing, and execution capabilities.
+YAPL is a dynamically-typed, interpreted programming language with a clean and simple syntax. This implementation provides a complete interpreter with lexical analysis, parsing, and execution capabilities.
 
 ## Language Syntax
 
@@ -108,10 +108,10 @@ Lox/
 ├── ast/             # Abstract Syntax Tree nodes
 ├── Interpreter/     # Expression and statement evaluation
 ├── environment/     # Variable environment management
-├── LoxErrors/       # Error handling and reporting
+├── YaplErrors/       # Error handling and reporting
 ├── state/           # Global interpreter state
 ├── printer/         # AST pretty printing utilities
-└── main.lox         # Example Lox program
+└── main.yapl        # Example Lox program
 ```
 
 ## Architecture
@@ -146,7 +146,7 @@ Error messages include:
 
 ## Development Status
 
-This implementation represents the early stages of a complete Lox interpreter. The core expression evaluation and basic statements are functional, providing a solid foundation for adding more advanced language features.
+This implementation represents the early stages of a complete interpreter. The core expression evaluation and basic statements are functional, providing a solid foundation for adding more advanced language features.
 
 ### Next Steps
 
@@ -160,7 +160,7 @@ This implementation represents the early stages of a complete Lox interpreter. T
 ## Features
 
 #### **Data Types**
-- **Numbers**: Floating-point numbers, all numbers are double, with 2 place float precision (e.g., `42`, `3.14`) 
+- **Numbers**: Floating-point numbers, all numbers are double, with 2-place float precision (e.g., `42`, `3.14`) 
 - **Strings**: Text literals enclosed in double quotes (e.g., `"hello world"`)
 - **Booleans**: `true` and `false`
 - **Nil**: Represents the absence of a value
