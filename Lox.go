@@ -7,8 +7,9 @@ import (
 	"os"
 
 	interpreter "github.com/shubhdevelop/Lox/Interpreter"
-	"github.com/shubhdevelop/Lox/parser"
 	"github.com/shubhdevelop/Lox/Scanner"
+	"github.com/shubhdevelop/Lox/environment"
+	"github.com/shubhdevelop/Lox/parser"
 	"github.com/shubhdevelop/Lox/state"
 )
 
@@ -16,7 +17,9 @@ func run(source string) {
 	state.HadError = false // Reset error state
 	scanner := scanner.Scanner{Source: source}
 	tokens, err := scanner.ScanTokens()
-	interpreter := interpreter.Interpreter{}
+	interpreter := interpreter.Interpreter{
+		environment.NewEnvironment(),
+	}
 	parserInstance := parser.Parser{
 		Tokens: tokens,
 	}

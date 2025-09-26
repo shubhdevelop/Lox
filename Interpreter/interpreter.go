@@ -10,9 +10,10 @@ import (
 	"github.com/shubhdevelop/Lox/environment"
 )
 
-type Interpreter struct{}
+type Interpreter struct {
+	Environment *environment.Environment
+}
 
-var env = environment.NewEnvironment()
 var _ ast.ExprVisitor = (*Interpreter)(nil)
 var _ ast.StmtVisitor = (*Interpreter)(nil)
 
@@ -214,17 +215,35 @@ func (i *Interpreter) VisitVarStmtStmt(stmt ast.VarStmt) interface{} {
 		value = i.evaluate(stmt.Initializer)
 	}
 
-	env.Define(stmt.Name.Lexeme, value)
+	i.Environment.Define(stmt.Name.Lexeme, value)
 	return nil
 }
 
 func (i *Interpreter) VisitVariableExpr(expr ast.Variable) interface{} {
-	value, _ := env.Get(expr.Name)
+	value, _ := i.Environment.Get(expr.Name)
 	return value
 }
 
 func (i *Interpreter) VisitAssignExpr(expr ast.Assign) interface{} {
 	value := i.evaluate(expr.Value)
-	env.Assign(expr.Name, value)
+	i.Environment.Assign(expr.Name, value)
 	return value
+}
+
+func (i *Interpreter) VisitBlockStmtStmt(stmt ast.BlockStmt) interface{} {
+	i.executeBlock(stmt.Statement, environment.NewEnclosedEnvironment(i.Environment))
+	return nil
+}
+
+func (i *Interpreter) executeBlock(statements []ast.Stmt, environment *environment.Environment) {
+	previous := i.Environment
+	defer func() {
+		// ensures environment is restored, like Java's finally
+		i.Environment = previous
+	}()
+
+	i.Environment = environment
+	for _, stmt := range statements {
+		i.execute(stmt)
+	}
 }
