@@ -114,12 +114,12 @@ func main() {
 		"Unary    : token.Token operator, Expr right",
 		"Variable : token.Token name",
 		"Assign   : token.Token name, Expr value",
-	}, []string{"github.com/shubhdevelop/Lox/Token"})
+	}, []string{"github.com/shubhdevelop/YAPL/Token"})
 
 	defineAst(outputDir, "Stmt", []string{
 		"BlockStmt      : []Stmt statement",
 		"ExpressionStmt : Expr expression",
 		"PrintStmt      : Expr expression",
 		"VarStmt : token.Token name, Expr initializer",
-	}, []string{"github.com/shubhdevelop/Lox/Token"})
+	}, []string{"github.com/shubhdevelop/YAPL/Token"})
 }

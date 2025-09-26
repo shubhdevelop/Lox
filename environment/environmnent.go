@@ -2,8 +2,8 @@ package environment
 
 import (
 	"fmt"
-	"github.com/shubhdevelop/Lox/Token"
-	"github.com/shubhdevelop/Lox/yaplErrors"
+	"github.com/shubhdevelop/YAPL/Token"
+	"github.com/shubhdevelop/YAPL/yaplErrors"
 )
 
 type Environment struct {

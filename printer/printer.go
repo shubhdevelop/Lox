@@ -2,7 +2,7 @@ package printer
 
 import (
 	"fmt"
-	"github.com/shubhdevelop/Lox/ast"
+	"github.com/shubhdevelop/YAPL/ast"
 	"strings"
 )
 

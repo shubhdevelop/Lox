@@ -2,8 +2,8 @@ package scanner
 
 import (
 	"errors"
-	"github.com/shubhdevelop/Lox/Token"
-	"github.com/shubhdevelop/Lox/yaplErrors"
+	"github.com/shubhdevelop/YAPL/Token"
+	"github.com/shubhdevelop/YAPL/yaplErrors"
 	"strconv"
 )
 

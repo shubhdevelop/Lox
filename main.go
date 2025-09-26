@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"os"
 
-	interpreter "github.com/shubhdevelop/Lox/Interpreter"
-	"github.com/shubhdevelop/Lox/Scanner"
-	"github.com/shubhdevelop/Lox/environment"
-	"github.com/shubhdevelop/Lox/parser"
-	"github.com/shubhdevelop/Lox/state"
+	interpreter "github.com/shubhdevelop/YAPL/Interpreter"
+	"github.com/shubhdevelop/YAPL/Scanner"
+	"github.com/shubhdevelop/YAPL/environment"
+	"github.com/shubhdevelop/YAPL/parser"
+	"github.com/shubhdevelop/YAPL/state"
 )
 
 func run(source string) {

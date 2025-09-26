@@ -1,7 +1,7 @@
 package ast
 
 import (
-    "github.com/shubhdevelop/Lox/Token"
+    "github.com/shubhdevelop/YAPL/Token"
 )
 
 type StmtVisitor interface {

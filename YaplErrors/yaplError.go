@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/shubhdevelop/Lox/Token"
-	"github.com/shubhdevelop/Lox/state"
+	"github.com/shubhdevelop/YAPL/Token"
+	"github.com/shubhdevelop/YAPL/state"
 )
 
 type RuntimeError struct {

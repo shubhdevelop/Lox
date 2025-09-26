@@ -3,9 +3,9 @@ package parser
 import (
 	"errors"
 
-	"github.com/shubhdevelop/Lox/Token"
-	"github.com/shubhdevelop/Lox/ast"
-	"github.com/shubhdevelop/Lox/yaplErrors"
+	"github.com/shubhdevelop/YAPL/Token"
+	"github.com/shubhdevelop/YAPL/ast"
+	"github.com/shubhdevelop/YAPL/yaplErrors"
 )
 
 type Parser struct {
