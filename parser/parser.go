@@ -259,10 +259,13 @@ func (p *Parser) varDeclaration() ast.Stmt {
 		initializer = p.expression()
 	}
 	p.consume(token.SEMICOLON, "Expect ';' after variable declaration.")
-	return ast.VarStmt{name, initializer}
+	return ast.VarStmt{Name: name, Initializer: initializer}
 }
 
 func (p *Parser) statement() ast.Stmt {
+	if p.match(token.FOR) {
+		return p.forStatement()
+	}
 	if p.match(token.IF) {
 		return p.ifStatement()
 	}
@@ -274,9 +277,67 @@ func (p *Parser) statement() ast.Stmt {
 		return p.whileStatement()
 	}
 	if p.match(token.LEFT_BRACE) {
-		return ast.BlockStmt{p.block()}
+		return ast.BlockStmt{
+			Statement: p.block(),
+		}
 	}
 	return p.expressionStatement()
+}
+
+func (p *Parser) forStatement() ast.Stmt {
+	p.consume(token.LEFT_PAREN, "Expect '(' after 'for'.")
+	var initializer ast.Stmt
+	if p.match(token.SEMICOLON) {
+		initializer = nil
+	} else if p.match(token.VAR) {
+		initializer = p.varDeclaration()
+	} else {
+		initializer = p.expressionStatement()
+	}
+
+	var condition ast.Expr
+	if !p.check(token.SEMICOLON) {
+		condition = p.expression()
+	}
+	p.consume(token.SEMICOLON, "Expect ';' after loop condition.")
+
+	var increment ast.Expr
+	if !p.check(token.RIGHT_PAREN) {
+		increment = p.expression()
+	}
+	p.consume(token.RIGHT_PAREN, "Expect ')' after for clauses.")
+
+	body := p.statement()
+
+	if increment != nil {
+		body = ast.BlockStmt{
+			Statement: []ast.Stmt{
+				body,
+				ast.ExpressionStmt{
+					Expression: increment,
+				},
+			},
+		}
+	}
+
+	if condition == nil {
+		condition = ast.Literal{Value: true}
+	}
+	body = ast.WhileStmt{
+		Condition: condition,
+		Body:      body,
+	}
+
+	if initializer != nil {
+		body = ast.BlockStmt{
+			Statement: []ast.Stmt{
+				initializer,
+				body,
+			},
+		}
+	}
+
+	return body
 }
 
 func (p *Parser) ifStatement() ast.Stmt {
@@ -297,13 +358,13 @@ func (p *Parser) ifStatement() ast.Stmt {
 }
 
 func (p *Parser) whileStatement() ast.Stmt {
-	p.consume(LEFT_PAREN, "Expect '(' after 'while'.");
-	condition := expression();
-	p.consume(RIGHT_PAREN, "Expect ')' after condition.");
-	body := statement();
+	p.consume(token.LEFT_PAREN, "Expect '(' after 'while'.")
+	condition := p.expression()
+	p.consume(token.RIGHT_PAREN, "Expect ')' after condition.")
+	body := p.statement()
 	return ast.WhileStmt{
 		Condition: condition,
-		Body: body
+		Body:      body,
 	}
 
 }
