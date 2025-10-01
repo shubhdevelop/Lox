@@ -124,5 +124,6 @@ func main() {
 			" Stmt elseBranch",
 		"PrintStmt      : Expr expression",
 		"VarStmt : token.Token name, Expr initializer",
+		"WhileStmt: Expr condition, Stmt body",
 	}, []string{"github.com/shubhdevelop/YAPL/Token"})
 }

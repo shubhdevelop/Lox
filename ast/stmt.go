@@ -10,6 +10,7 @@ type StmtVisitor interface {
     VisitIfStmtStmt(stmt IfStmt) interface{}
     VisitPrintStmtStmt(stmt PrintStmt) interface{}
     VisitVarStmtStmt(stmt VarStmt) interface{}
+    VisitWhileStmtStmt(stmt WhileStmt) interface{}
 }
 
 type Stmt interface {
@@ -57,5 +58,14 @@ type VarStmt struct {
 
 func (n VarStmt) Accept(visitor StmtVisitor) interface{} {
     return visitor.VisitVarStmtStmt(n)
+}
+
+type WhileStmt struct {
+    Condition Expr
+    Body Stmt
+}
+
+func (n WhileStmt) Accept(visitor StmtVisitor) interface{} {
+    return visitor.VisitWhileStmtStmt(n)
 }
 
