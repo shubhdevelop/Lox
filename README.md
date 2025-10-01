@@ -1,10 +1,10 @@
 # YAPL Interpreter
 
-A Go implementation of a programming language interpreter
+A Go implementation of a complete programming language interpreter
 
 ## Overview
 
-YAPL is a dynamically-typed, interpreted programming language with a clean and simple syntax. This implementation provides a complete interpreter with lexical analysis, parsing, and execution capabilities.
+YAPL (Yet Another Programming Language) is a dynamically-typed, interpreted programming language with a clean and simple syntax. This implementation provides a full-featured interpreter with lexical analysis, parsing, and execution capabilities, including control flow statements, variable scoping, and comprehensive error handling.
 
 ## Language Syntax
 
@@ -22,6 +22,8 @@ YAPL is a dynamically-typed, interpreted programming language with a clean and s
 and, class, else, false, for, fun, if, nil, or, print, return, super, this, true, var, while
 ```
 
+**Note**: `class`, `fun`, `return`, `super`, and `this` are reserved for future implementation.
+
 ### Operators
 
 | Operator | Description | Example |
@@ -37,8 +39,8 @@ and, class, else, false, for, fun, if, nil, or, print, return, super, this, true
 | `>=` | Greater than or equal | `5 >= 5` |
 | `<` | Less than | `3 < 5` |
 | `<=` | Less than or equal | `3 <= 5` |
-| `and` | Logical AND | `true and false` | (yet to be implemented)
-| `or` | Logical OR | `true or false` | (yet to be implemented)
+| `and` | Logical AND | `true and false` |
+| `or` | Logical OR | `true or false` |
 
 ## Usage
 
@@ -52,7 +54,7 @@ go build
 
 #### From a File
 ```bash
-./Lox script.lox
+./Lox script.yapl
 ```
 
 #### Interactive Mode
@@ -68,7 +70,7 @@ In interactive mode, you can:
 ### Example Programs
 
 #### Basic Arithmetic
-```lox
+```yapl
 var a = 10;
 var b = 20;
 print a + b;  // Output: 30
@@ -76,42 +78,81 @@ print a * b;  // Output: 200
 ```
 
 #### String Operations
-```lox
+```yapl
 var greeting = "Hello";
 var name = "World";
 print greeting + " " + name;  // Output: Hello World
 ```
 
 #### Boolean Logic
-```lox
+```yapl
 var x = true;
 var y = false;
-print y == x;
-print !x;       // Output: false
+print y == x;  // Output: false
+print !x;      // Output: false
+print true and false;  // Output: false
+print true or false;   // Output: true
 ```
 
 #### Variable Assignment
-```lox
+```yapl
 var count = 0;
 print count;    // Output: 0
 count = count + 1;
 print count;    // Output: 1
 ```
 
+#### Control Flow
+```yapl
+// If statement
+var age = 18;
+if (age >= 18) {
+    print "You are an adult";
+} else {
+    print "You are a minor";
+}
+
+// While loop
+var i = 0;
+while (i < 5) {
+    print i;
+    i = i + 1;
+}
+
+// For loop (desugared to while)
+for (var j = 0; j < 3; j = j + 1) {
+    print "Iteration: " + j;
+}
+```
+
+#### Block Scoping
+```yapl
+var global = "I'm global";
+{
+    var local = "I'm local";
+    print global;  // Output: I'm global
+    print local;   // Output: I'm local
+}
+print global;  // Output: I'm global
+// print local;  // Error: Undefined variable 'local'
+```
+
 ## Project Structure
 
 ```
-Lox/
+YAPL/
 ├── Token/           # Token definitions and types
 ├── Scanner/         # Lexical analysis (tokenization)
 ├── parser/          # Syntax analysis (parsing)
 ├── ast/             # Abstract Syntax Tree nodes
 ├── Interpreter/     # Expression and statement evaluation
-├── environment/     # Variable environment management
-├── YaplErrors/       # Error handling and reporting
+├── environment/     # Variable environment management with scoping
+├── YaplErrors/      # Error handling and reporting
 ├── state/           # Global interpreter state
 ├── printer/         # AST pretty printing utilities
-└── main.yapl        # Example Lox program
+├── main.go          # Main interpreter entry point
+├── test.lox         # Example YAPL program
+└── main.yapl        # Additional example program
 ```
 
 ## Architecture
@@ -126,10 +167,11 @@ The interpreter follows a traditional pipeline architecture:
 
 - **Token**: Represents lexical units (keywords, operators, literals)
 - **Scanner**: Implements lexical analysis with support for comments, strings, numbers, and identifiers
-- **Parser**: Recursive descent parser with error recovery
-- **AST**: Tree representation of program structure
+- **Parser**: Recursive descent parser with error recovery and support for all control flow statements
+- **AST**: Tree representation of program structure with expression and statement nodes
 - **Interpreter**: Visitor pattern implementation for expression and statement evaluation
-- **Environment**: Manages variable storage and lookup
+- **Environment**: Manages variable storage and lookup with proper scoping support
+- **Error Handling**: Comprehensive error reporting for lexical, parse, and runtime errors
 
 ## Error Handling
 
@@ -146,15 +188,25 @@ Error messages include:
 
 ## Development Status
 
-This implementation represents the early stages of a complete interpreter. The core expression evaluation and basic statements are functional, providing a solid foundation for adding more advanced language features.
+This implementation represents a mature interpreter with comprehensive language features. The core functionality is complete and includes:
 
-### Next Steps
+### ✅ Implemented Features
 
-1. Implement control flow statements (`if`, `while`, `for`)
-2. Add function support
-3. Implement classes and objects
-4. Add local scoping
-5. Enhance error handling and debugging features
+- **Complete Expression System**: All arithmetic, comparison, logical, and unary operations
+- **Control Flow**: `if`/`else` statements, `while` loops, and `for` loops (desugared to while)
+- **Variable Management**: Declaration, assignment, and proper scoping with block environments
+- **Data Types**: Numbers (float64), strings, booleans, and nil
+- **Error Handling**: Comprehensive lexical, parse, and runtime error reporting
+- **Interactive Mode**: REPL with clear and exit commands
+- **File Execution**: Run YAPL programs from files
+
+### 🚧 Future Enhancements
+
+1. **Functions**: User-defined functions with parameters and return values
+2. **Classes and Objects**: Object-oriented programming support
+3. **Standard Library**: Built-in functions for common operations
+4. **Modules**: Import/export system for code organization
+5. **Advanced Error Recovery**: Better error messages and suggestions
 
 
 ## Features
@@ -188,11 +240,16 @@ This implementation represents the early stages of a complete interpreter. The c
 - **Variable Declaration**: `var name = value;`
 - **Print Statement**: `print expression;`
 - **Expression Statement**: Any expression followed by `;`
+- **If Statement**: `if (condition) statement else statement`
+- **While Loop**: `while (condition) statement`
+- **For Loop**: `for (initializer; condition; increment) statement`
+- **Block Statement**: `{ statement1; statement2; ... }`
 
 #### **Variables**
 - **Declaration**: `var variableName;` or `var variableName = initialValue;`
 - **Assignment**: `variableName = newValue;`
-- **Scope**: Global scope (variables are accessible throughout the program)
+- **Scope**: Block-scoped variables with proper environment nesting
+- **Lookup**: Variables are looked up in the current scope and enclosing scopes
 
 #### **Comments**
 - **Single-line comments**: `// This is a comment`
