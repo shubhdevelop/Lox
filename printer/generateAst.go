@@ -111,6 +111,7 @@ func main() {
 		"Binary   : Expr left, token.Token operator, Expr right",
 		"Grouping : Expr expression",
 		"Literal  : interface{} value",
+		"Logical  : Expr left, token.Token operator, Expr right",
 		"Unary    : token.Token operator, Expr right",
 		"Variable : token.Token name",
 		"Assign   : token.Token name, Expr value",
