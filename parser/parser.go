@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/shubhdevelop/YAPL/Token"
-	"github.com/shubhdevelop/YAPL/ast"
 	"github.com/shubhdevelop/YAPL/YaplErrors"
+	"github.com/shubhdevelop/YAPL/ast"
 )
 
 type Parser struct {
@@ -234,6 +234,9 @@ func (p *Parser) varDeclaration() ast.Stmt {
 }
 
 func (p *Parser) statement() ast.Stmt {
+	if p.match(token.IF) {
+		return p.ifStatement()
+	}
 	if p.match(token.PRINT) {
 		return p.printStatement()
 	}
@@ -241,6 +244,23 @@ func (p *Parser) statement() ast.Stmt {
 		return ast.BlockStmt{p.block()}
 	}
 	return p.expressionStatement()
+}
+
+func (p *Parser) ifStatement() ast.Stmt {
+	p.consume(token.LEFT_PAREN, "Expect '(' after 'if'.")
+	condition := p.expression()
+
+	p.consume(token.RIGHT_PAREN, "Expect ')' after 'if'.")
+	thenBranch := p.statement()
+	var elseBranch ast.Stmt
+	if p.match(token.ELSE) {
+		elseBranch = p.statement()
+	}
+	return ast.IfStmt{
+		Condition:  condition,
+		ThenBranch: thenBranch,
+		ElseBranch: elseBranch,
+	}
 }
 
 func (p *Parser) block() []ast.Stmt {

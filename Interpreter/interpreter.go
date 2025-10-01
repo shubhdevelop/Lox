@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/shubhdevelop/YAPL/Token"
+	"github.com/shubhdevelop/YAPL/YaplErrors"
 	"github.com/shubhdevelop/YAPL/ast"
 	"github.com/shubhdevelop/YAPL/environment"
-	"github.com/shubhdevelop/YAPL/YaplErrors"
 )
 
 type Interpreter struct {
@@ -232,6 +232,15 @@ func (i *Interpreter) VisitAssignExpr(expr ast.Assign) interface{} {
 
 func (i *Interpreter) VisitBlockStmtStmt(stmt ast.BlockStmt) interface{} {
 	i.executeBlock(stmt.Statement, environment.NewEnclosedEnvironment(i.Environment))
+	return nil
+}
+
+func (i *Interpreter) VisitIfStmtStmt(stmt ast.IfStmt) interface{} {
+	if i.isTruthy(i.evaluate(stmt.Condition)) {
+		i.execute(stmt.ThenBranch)
+	} else if stmt.ElseBranch != nil {
+		i.execute(stmt.ElseBranch)
+	}
 	return nil
 }
 
