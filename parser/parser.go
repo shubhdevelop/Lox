@@ -269,6 +269,10 @@ func (p *Parser) statement() ast.Stmt {
 	if p.match(token.PRINT) {
 		return p.printStatement()
 	}
+
+	if p.match(token.WHILE) {
+		return p.whileStatement()
+	}
 	if p.match(token.LEFT_BRACE) {
 		return ast.BlockStmt{p.block()}
 	}
@@ -290,6 +294,18 @@ func (p *Parser) ifStatement() ast.Stmt {
 		ThenBranch: thenBranch,
 		ElseBranch: elseBranch,
 	}
+}
+
+func (p *Parser) whileStatement() ast.Stmt {
+	p.consume(LEFT_PAREN, "Expect '(' after 'while'.");
+	condition := expression();
+	p.consume(RIGHT_PAREN, "Expect ')' after condition.");
+	body := statement();
+	return ast.WhileStmt{
+		Condition: condition,
+		Body: body
+	}
+
 }
 
 func (p *Parser) block() []ast.Stmt {

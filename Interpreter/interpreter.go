@@ -259,6 +259,13 @@ func (i *Interpreter) VisitLogicalExpr(expr ast.Logical) interface{} {
 	return i.evaluate(expr.Right)
 }
 
+func (i *Interpreter) VisitWhileStmtStmt(stmt ast.WhileStmt) interface{} {
+	for i.isTruthy(i.evaluate(stmt.Condition)) {
+		i.execute(stmt.Body)
+	}
+	return nil
+}
+
 func (i *Interpreter) executeBlock(statements []ast.Stmt, environment *environment.Environment) {
 	previous := i.Environment
 	defer func() {
