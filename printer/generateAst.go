@@ -119,6 +119,8 @@ func main() {
 	defineAst(outputDir, "Stmt", []string{
 		"BlockStmt      : []Stmt statement",
 		"ExpressionStmt : Expr expression",
+		"IfStmt : Expr condition, Stmt thenBranch," +
+			" Stmt elseBranch",
 		"PrintStmt      : Expr expression",
 		"VarStmt : token.Token name, Expr initializer",
 	}, []string{"github.com/shubhdevelop/YAPL/Token"})

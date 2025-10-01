@@ -7,6 +7,7 @@ import (
 type StmtVisitor interface {
     VisitBlockStmtStmt(stmt BlockStmt) interface{}
     VisitExpressionStmtStmt(stmt ExpressionStmt) interface{}
+    VisitIfStmtStmt(stmt IfStmt) interface{}
     VisitPrintStmtStmt(stmt PrintStmt) interface{}
     VisitVarStmtStmt(stmt VarStmt) interface{}
 }
@@ -29,6 +30,16 @@ type ExpressionStmt struct {
 
 func (n ExpressionStmt) Accept(visitor StmtVisitor) interface{} {
     return visitor.VisitExpressionStmtStmt(n)
+}
+
+type IfStmt struct {
+    Condition Expr
+    ThenBranch Stmt
+    ElseBranch Stmt
+}
+
+func (n IfStmt) Accept(visitor StmtVisitor) interface{} {
+    return visitor.VisitIfStmtStmt(n)
 }
 
 type PrintStmt struct {
