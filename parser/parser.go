@@ -44,7 +44,7 @@ func (p *Parser) expression() ast.Expr {
 }
 
 func (p *Parser) assignment() ast.Expr {
-	expr := p.equality()
+	expr := p.or()
 	if p.match(token.EQUAL) {
 		equals := p.previous()
 		value := p.assignment()
@@ -73,6 +73,35 @@ func (p *Parser) equality() ast.Expr {
 	}
 	return expr
 
+}
+
+func (p *Parser) or() ast.Expr {
+	expr := p.and()
+	for p.match(token.OR) {
+		operator := p.previous()
+		right := p.and()
+		expr = ast.Logical{
+			Left:     expr,
+			Operator: operator,
+			Right:    right,
+		}
+	}
+	return expr
+}
+
+func (p *Parser) and() ast.Expr {
+	expr := p.equality()
+
+	for p.match(token.AND) {
+		operator := p.previous()
+		right := p.equality()
+		expr = ast.Logical{
+			Left:     expr,
+			Operator: operator,
+			Right:    right,
+		}
+	}
+	return expr
 }
 
 func (p *Parser) match(types ...token.TokenType) bool {
@@ -186,7 +215,7 @@ func (p *Parser) primary() ast.Expr {
 		return ast.Literal{Value: p.previous().Literal}
 	case p.match(token.IDENTIFIER):
 		return ast.Variable{
-			p.previous(),
+			Name: p.previous(),
 		}
 
 	case p.match(token.LEFT_PAREN):

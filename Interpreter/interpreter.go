@@ -244,6 +244,21 @@ func (i *Interpreter) VisitIfStmtStmt(stmt ast.IfStmt) interface{} {
 	return nil
 }
 
+func (i *Interpreter) VisitLogicalExpr(expr ast.Logical) interface{} {
+	left := i.evaluate(expr.Left)
+
+	if expr.Operator.Type == token.OR {
+		if i.isTruthy(left) {
+			return left
+		}
+	} else {
+		if !i.isTruthy(left) {
+			return left
+		}
+	}
+	return i.evaluate(expr.Right)
+}
+
 func (i *Interpreter) executeBlock(statements []ast.Stmt, environment *environment.Environment) {
 	previous := i.Environment
 	defer func() {
