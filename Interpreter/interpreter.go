@@ -281,6 +281,9 @@ func (i *Interpreter) executeBlock(statements []ast.Stmt, environment *environme
 	i.Environment = environment
 	for _, stmt := range statements {
 		i.execute(stmt)
+		if state.AbruptCompletion {
+			break
+		}
 	}
 }
 
