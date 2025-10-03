@@ -125,5 +125,6 @@ func main() {
 		"PrintStmt      : Expr expression",
 		"VarStmt : token.Token name, Expr initializer",
 		"WhileStmt: Expr condition, Stmt body",
+		"BreakStmt: ",
 	}, []string{"github.com/shubhdevelop/YAPL/Token"})
 }
