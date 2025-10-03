@@ -273,6 +273,9 @@ func (p *Parser) statement() ast.Stmt {
 	if p.match(token.PRINT) {
 		return p.printStatement()
 	}
+	if p.match(token.CONTINUE) {
+		return p.continueStatement()
+	}
 	if p.match(token.BREAK) {
 		return p.breakStatement()
 	}
@@ -310,9 +313,9 @@ func (p *Parser) forStatement() ast.Stmt {
 	}
 	p.consume(token.RIGHT_PAREN, "Expect ')' after for clauses.")
 
-	state.CanInsertBreakStatement = true
+	state.CanInsertBreakOrContinueStatement = true
 	body := p.statement()
-	state.CanInsertBreakStatement = false
+	state.CanInsertBreakOrContinueStatement = false
 
 	if increment != nil {
 		body = ast.BlockStmt{
@@ -367,18 +370,26 @@ func (p *Parser) whileStatement() ast.Stmt {
 	condition := p.expression()
 	p.consume(token.RIGHT_PAREN, "Expect ')' after condition.")
 
-	state.CanInsertBreakStatement = true
+	state.CanInsertBreakOrContinueStatement = true
 	body := p.statement()
-	state.CanInsertBreakStatement = false
+	state.CanInsertBreakOrContinueStatement = false
 	return ast.WhileStmt{
 		Condition: condition,
 		Body:      body,
 	}
 
 }
+func (p *Parser) continueStatement() ast.Stmt {
+	if !state.CanInsertBreakOrContinueStatement {
+		p.error(p.peek(), "continueStatemen can only exist inside valid iterator")
+
+	}
+	p.consume(token.SEMICOLON, "Expect ';' after value.")
+	return ast.ContinueStmt{}
+}
 
 func (p *Parser) breakStatement() ast.Stmt {
-	if !state.CanInsertBreakStatement {
+	if !state.CanInsertBreakOrContinueStatement {
 		p.error(p.peek(), "breakStatement can only exist inside valid iterator")
 
 	}
