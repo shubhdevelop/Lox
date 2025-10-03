@@ -53,6 +53,7 @@ const (
 	TRUE
 	VAR
 	WHILE
+	BREAK
 
 	// End of file
 	EOF
@@ -66,7 +67,7 @@ func (t TokenType) String() string {
 		"LESS", "LESS_EQUAL",
 		"IDENTIFIER", "STRING", "NUMBER",
 		"AND", "CLASS", "ELSE", "FALSE", "FUN", "FOR", "IF", "NIL", "OR",
-		"PRINT", "RETURN", "SUPER", "THIS", "TRUE", "VAR", "WHILE",
+		"PRINT", "RETURN", "SUPER", "THIS", "TRUE", "VAR", "WHILE", "BREAK",
 		"EOF",
 	}[t]
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/shubhdevelop/YAPL/YaplErrors"
 	"github.com/shubhdevelop/YAPL/ast"
 	"github.com/shubhdevelop/YAPL/environment"
+	"github.com/shubhdevelop/YAPL/state"
 )
 
 type Interpreter struct {
@@ -262,6 +263,10 @@ func (i *Interpreter) VisitLogicalExpr(expr ast.Logical) interface{} {
 func (i *Interpreter) VisitWhileStmtStmt(stmt ast.WhileStmt) interface{} {
 	for i.isTruthy(i.evaluate(stmt.Condition)) {
 		i.execute(stmt.Body)
+		if state.AbruptCompletion {
+			state.AbruptCompletion = false
+			break
+		}
 	}
 	return nil
 }
@@ -276,5 +281,13 @@ func (i *Interpreter) executeBlock(statements []ast.Stmt, environment *environme
 	i.Environment = environment
 	for _, stmt := range statements {
 		i.execute(stmt)
+		if state.AbruptCompletion {
+			break
+		}
 	}
+}
+
+func (i *Interpreter) VisitBreakStmtStmt(stmt ast.BreakStmt) interface{} {
+	state.AbruptCompletion = true
+	return nil
 }

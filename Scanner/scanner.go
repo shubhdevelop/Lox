@@ -36,6 +36,7 @@ var KeywordMap = map[string]token.TokenType{
 	"true":   token.TRUE,
 	"var":    token.VAR,
 	"while":  token.WHILE,
+	"break":  token.BREAK,
 }
 
 func (s *Scanner) isAtEnd() bool {

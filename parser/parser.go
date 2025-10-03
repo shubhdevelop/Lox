@@ -6,6 +6,7 @@ import (
 	"github.com/shubhdevelop/YAPL/Token"
 	"github.com/shubhdevelop/YAPL/YaplErrors"
 	"github.com/shubhdevelop/YAPL/ast"
+	"github.com/shubhdevelop/YAPL/state"
 )
 
 type Parser struct {
@@ -272,7 +273,9 @@ func (p *Parser) statement() ast.Stmt {
 	if p.match(token.PRINT) {
 		return p.printStatement()
 	}
-
+	if p.match(token.BREAK) {
+		return p.breakStatement()
+	}
 	if p.match(token.WHILE) {
 		return p.whileStatement()
 	}
@@ -307,7 +310,9 @@ func (p *Parser) forStatement() ast.Stmt {
 	}
 	p.consume(token.RIGHT_PAREN, "Expect ')' after for clauses.")
 
+	state.CanInsertBreakStatement = true
 	body := p.statement()
+	state.CanInsertBreakStatement = false
 
 	if increment != nil {
 		body = ast.BlockStmt{
@@ -361,12 +366,24 @@ func (p *Parser) whileStatement() ast.Stmt {
 	p.consume(token.LEFT_PAREN, "Expect '(' after 'while'.")
 	condition := p.expression()
 	p.consume(token.RIGHT_PAREN, "Expect ')' after condition.")
+
+	state.CanInsertBreakStatement = true
 	body := p.statement()
+	state.CanInsertBreakStatement = false
 	return ast.WhileStmt{
 		Condition: condition,
 		Body:      body,
 	}
 
+}
+
+func (p *Parser) breakStatement() ast.Stmt {
+	if !state.CanInsertBreakStatement {
+		p.error(p.peek(), "breakStatement can only exist inside valid iterator")
+
+	}
+	p.consume(token.SEMICOLON, "Expect ';' after value.")
+	return ast.BreakStmt{}
 }
 
 func (p *Parser) block() []ast.Stmt {
