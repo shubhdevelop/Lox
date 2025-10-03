@@ -12,6 +12,7 @@ type StmtVisitor interface {
     VisitVarStmtStmt(stmt VarStmt) interface{}
     VisitWhileStmtStmt(stmt WhileStmt) interface{}
     VisitBreakStmtStmt(stmt BreakStmt) interface{}
+    VisitContinueStmtStmt(stmt ContinueStmt) interface{}
 }
 
 type Stmt interface {
@@ -75,5 +76,12 @@ type BreakStmt struct {
 
 func (n BreakStmt) Accept(visitor StmtVisitor) interface{} {
     return visitor.VisitBreakStmtStmt(n)
+}
+
+type ContinueStmt struct {
+}
+
+func (n ContinueStmt) Accept(visitor StmtVisitor) interface{} {
+    return visitor.VisitContinueStmtStmt(n)
 }
 
