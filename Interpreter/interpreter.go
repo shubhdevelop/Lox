@@ -287,12 +287,10 @@ func (i *Interpreter) executeBlock(statements []ast.Stmt, environment *environme
 	for _, stmt := range statements {
 		i.execute(stmt)
 		if state.ContinueException {
-			state.ContinueException = false
-			continue
+			return // Exit the block immediately for continue, let while loop handle the flag
 		}
 		if state.AbruptCompletion {
-			state.AbruptCompletion = false
-			break
+			return // Exit the block immediately for break, let while loop handle the flag
 		}
 	}
 }
@@ -303,5 +301,6 @@ func (i *Interpreter) VisitBreakStmtStmt(stmt ast.BreakStmt) interface{} {
 }
 
 func (i *Interpreter) VisitContinueStmtStmt(stmt ast.ContinueStmt) interface{} {
+	state.ContinueException = true
 	return nil
 }
