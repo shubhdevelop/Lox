@@ -19,7 +19,7 @@ YAPL (Yet Another Programming Language) is a dynamically-typed, interpreted prog
 ### Reserved Keywords
 
 ```
-and, class, else, false, for, fun, if, nil, or, print, return, super, this, true, var, while
+and, break, class, else, false, for, fun, if, nil, or, print, return, super, this, true, var, while
 ```
 
 **Note**: `class`, `fun`, `return`, `super`, and `this` are reserved for future implementation.
@@ -123,6 +123,21 @@ while (i < 5) {
 for (var j = 0; j < 3; j = j + 1) {
     print "Iteration: " + j;
 }
+
+// Break statement
+var a = 1;
+while (a < 100) {
+    while (a < 40) {
+        if (a == 39) {
+            break;  // Breaks out of inner loop only
+        }
+        print a;
+        a = a + 1;
+    }
+    print "now outside";
+    print a;
+    a = a + 1;
+}
 ```
 
 #### Block Scoping
@@ -193,7 +208,7 @@ This implementation represents a mature interpreter with comprehensive language 
 ### ✅ Implemented Features
 
 - **Complete Expression System**: All arithmetic, comparison, logical, and unary operations
-- **Control Flow**: `if`/`else` statements, `while` loops, and `for` loops (desugared to while)
+- **Control Flow**: `if`/`else` statements, `while` loops, `for` loops (desugared to while), and `break` statements
 - **Variable Management**: Declaration, assignment, and proper scoping with block environments
 - **Data Types**: Numbers (float64), strings, booleans, and nil
 - **Error Handling**: Comprehensive lexical, parse, and runtime error reporting
@@ -243,6 +258,7 @@ This implementation represents a mature interpreter with comprehensive language 
 - **If Statement**: `if (condition) statement else statement`
 - **While Loop**: `while (condition) statement`
 - **For Loop**: `for (initializer; condition; increment) statement`
+- **Break Statement**: `break;` (exits the innermost loop)
 - **Block Statement**: `{ statement1; statement2; ... }`
 
 #### **Variables**
@@ -250,6 +266,23 @@ This implementation represents a mature interpreter with comprehensive language 
 - **Assignment**: `variableName = newValue;`
 - **Scope**: Block-scoped variables with proper environment nesting
 - **Lookup**: Variables are looked up in the current scope and enclosing scopes
+
+#### **Break Statement**
+- **Syntax**: `break;`
+- **Purpose**: Exits the innermost loop (while or for) immediately
+- **Scope**: Only affects the current loop level, outer loops continue normally
+- **Usage**: Must be used inside a loop body
+- **Example**:
+  ```yapl
+  var i = 0;
+  while (i < 10) {
+      if (i == 5) {
+          break;  // Exits the while loop when i equals 5
+      }
+      print i;
+      i = i + 1;
+  }
+  ```
 
 #### **Comments**
 - **Single-line comments**: `// This is a comment`
