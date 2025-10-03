@@ -262,11 +262,10 @@ func (i *Interpreter) VisitLogicalExpr(expr ast.Logical) interface{} {
 
 func (i *Interpreter) VisitWhileStmtStmt(stmt ast.WhileStmt) interface{} {
 	for i.isTruthy(i.evaluate(stmt.Condition)) {
+		i.execute(stmt.Body)
 		if state.AbruptCompletion {
 			state.AbruptCompletion = false
 			break
-		} else {
-			i.execute(stmt.Body)
 		}
 	}
 	return nil
