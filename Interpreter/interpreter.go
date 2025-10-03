@@ -263,6 +263,11 @@ func (i *Interpreter) VisitLogicalExpr(expr ast.Logical) interface{} {
 func (i *Interpreter) VisitWhileStmtStmt(stmt ast.WhileStmt) interface{} {
 	for i.isTruthy(i.evaluate(stmt.Condition)) {
 		i.execute(stmt.Body)
+
+		if state.ContinueException {
+			state.ContinueException = false
+			continue
+		}
 		if state.AbruptCompletion {
 			state.AbruptCompletion = false
 			break
@@ -281,7 +286,12 @@ func (i *Interpreter) executeBlock(statements []ast.Stmt, environment *environme
 	i.Environment = environment
 	for _, stmt := range statements {
 		i.execute(stmt)
+		if state.ContinueException {
+			state.ContinueException = false
+			continue
+		}
 		if state.AbruptCompletion {
+			state.AbruptCompletion = false
 			break
 		}
 	}
@@ -289,5 +299,9 @@ func (i *Interpreter) executeBlock(statements []ast.Stmt, environment *environme
 
 func (i *Interpreter) VisitBreakStmtStmt(stmt ast.BreakStmt) interface{} {
 	state.AbruptCompletion = true
+	return nil
+}
+
+func (i *Interpreter) VisitContinueStmtStmt(stmt ast.ContinueStmt) interface{} {
 	return nil
 }
